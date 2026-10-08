@@ -21,8 +21,8 @@ brand_info = {
     },
     "api_endpoints": {
         "content_base_url": "https://siskill.in/content/",
-        "sync_manifest_url": "https://siskill.in/api/v1/manifest.json",
-        "github_mirror_fallback": "https://raw.githubusercontent.com/"
+        "sync_manifest_url": "https://raw.githubusercontent.com/0x000zro/SISKILL_TET_Prep/main/UPTET_CTET/Paper_1_and_2/master_manifest.json",
+        "github_mirror_fallback": "https://raw.githubusercontent.com/0x000zro/SISKILL_TET_Prep/main/"
     }
 }
 

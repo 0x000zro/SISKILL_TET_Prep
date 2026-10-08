@@ -9,15 +9,15 @@ object Constants {
     const val ASSETS_MASTER_MANIFEST = "bundled_content/master_manifest.json"
 
     // GitHub dynamic remote content sync
-    const val DEFAULT_GITHUB_OWNER = "siskill-org"
-    const val DEFAULT_GITHUB_REPO = "siskill-tet-pedagogy"
+    const val DEFAULT_GITHUB_OWNER = "0x000zro"
+    const val DEFAULT_GITHUB_REPO = "SISKILL_TET_Prep"
     const val DEFAULT_GITHUB_BRANCH = "main"
 
     fun getRawGitHubBaseUrl(owner: String = DEFAULT_GITHUB_OWNER, repo: String = DEFAULT_GITHUB_REPO, branch: String = DEFAULT_GITHUB_BRANCH): String =
-        "https://raw.githubusercontent.com/$owner/$repo/$branch/"
+        "https://raw.githubusercontent.com/0x000zro/SISKILL_TET_Prep/main/"
 
     fun getCdnFallbackBaseUrl(owner: String = DEFAULT_GITHUB_OWNER, repo: String = DEFAULT_GITHUB_REPO, branch: String = DEFAULT_GITHUB_BRANCH): String =
-        "https://cdn.jsdelivr.net/gh/$owner/$repo@$branch/"
+        "https://cdn.jsdelivr.net/gh/0x000zro/SISKILL_TET_Prep@main/"
 
     // Leaf asset keys
     const val ASSET_CONCEPT = "Concept"

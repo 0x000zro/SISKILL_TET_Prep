@@ -69,10 +69,45 @@ SISKILL_TET_Prep/
 │   ├── master_manifest.json          # Master subject taxonomy index
 │   └── social_links.json             # Social media & official channels
 ├── schemas/                          # JSON Schemas for content validation
+├── .github/workflows/                # CI/CD workflows for validation & APK build
 ├── build.gradle.kts                  # Root Gradle build script
 ├── settings.gradle.kts               # Project settings (project name: SISKILL_TET_Prep)
 ├── integrate_siskill.py              # Branding & manifest synchronization script
-└── setup_github.sh                   # Helper script for git repository setup & push
+├── sync_content_version.py           # OTA version bumper & deployment helper
+├── git_sync.sh                       # 2-way GitHub synchronization script
+└── setup_github.sh                   # Initial Git setup & push helper
+```
+
+---
+
+## 🔄 GitHub Sync Engine (Over-The-Air & Git Sync)
+
+### 1. In-App Over-The-Air (OTA) Content Sync
+The Android app includes a built-in sync engine ([`GitHubContentSyncService`](file:///data/data/com.termux/files/home/siskill/app/src/main/java/com/tetprep/aspirant/sync/GitHubContentSyncService.kt)) and background worker ([`ContentSyncWorker`](file:///data/data/com.termux/files/home/siskill/app/src/main/java/com/tetprep/aspirant/sync/ContentSyncWorker.kt)):
+- Connected to: `https://raw.githubusercontent.com/0x000zro/SISKILL_TET_Prep/main/`
+- Whenever questions, notes, or manifests are updated on GitHub, installed apps pull the latest syllabus updates automatically (or manually via **Settings → Check for Updates**).
+
+### 2. Publish New Content Updates (OTA Bump)
+To deploy new syllabus notes or questions so user apps pull them:
+```bash
+# Bump content version (e.g. 1.0.0 -> 1.0.1) and push to GitHub
+python sync_content_version.py --push -m "Added CDP Topic 1 practice MCQs"
+```
+
+### 3. Bidirectional Git Sync with Termux
+Keep your local Termux directory and GitHub repository in sync:
+```bash
+# Full 2-way sync (pull remote + commit & push local changes)
+bash git_sync.sh
+
+# Check sync status
+bash git_sync.sh status
+
+# Pull only
+bash git_sync.sh pull
+
+# Push only with custom message
+bash git_sync.sh push "Updated pedagogy content"
 ```
 
 ---
