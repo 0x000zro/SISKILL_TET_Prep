@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pedagogy.local/schemas/mock.schema.json",
+  "title": "MockTestPaper",
+  "type": "object",
+  "required": [
+    "test_id",
+    "title",
+    "paper_code",
+    "duration_minutes",
+    "total_marks",
+    "sections"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "test_id": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string"
+    },
+    "paper_code": {
+      "type": "string",
+      "enum": [
+        "Paper_1",
+        "Paper_2"
+      ]
+    },
+    "duration_minutes": {
+      "type": "integer",
+      "default": 150
+    },
+    "total_marks": {
+      "type": "integer",
+      "default": 150
+    },
+    "negative_marking_rate": {
+      "type": "number",
+      "default": 0.0
+    },
+    "sections": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "section_name",
+          "subject_id",
+          "question_count",
+          "questions"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "section_name": {
+            "type": "string"
+          },
+          "subject_id": {
+            "type": "string"
+          },
+          "question_count": {
+            "type": "integer"
+          },
+          "questions": {
+            "type": "array",
+            "items": {
+              "$ref": "question.schema.json"
+            }
+          }
+        }
+      }
+    }
+  }
+}

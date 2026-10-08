@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pedagogy.local/schemas/topic.schema.json",
+  "title": "TopicNode",
+  "type": "object",
+  "required": [
+    "id",
+    "code",
+    "name_hi",
+    "subtopics"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^T\\d{2}$"
+    },
+    "code": {
+      "type": "string"
+    },
+    "name_hi": {
+      "type": "string"
+    },
+    "subtopics": {
+      "type": "array",
+      "items": {
+        "$ref": "subtopic.schema.json"
+      },
+      "minItems": 1
+    }
+  }
+}

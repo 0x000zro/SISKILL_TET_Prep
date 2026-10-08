@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pedagogy.local/schemas/concept.schema.json",
+  "title": "ConceptArticle",
+  "type": "object",
+  "required": [
+    "micro_topic_id",
+    "title",
+    "content_markdown",
+    "estimated_read_minutes"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "micro_topic_id": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string"
+    },
+    "content_markdown": {
+      "type": "string",
+      "minLength": 50
+    },
+    "estimated_read_minutes": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "key_takeaways": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "pedagogical_focus": {
+      "type": "string",
+      "enum": [
+        "UPTET_Factual",
+        "CTET_Application",
+        "Common_Core"
+      ]
+    }
+  }
+}

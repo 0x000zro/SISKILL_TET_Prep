@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">SISKILL TET Prep</string>
+    <string name="app_tagline">Super Intelligence Skill to Crack CTET &amp; UPTET</string>
+    <string name="brand_name">SISKILL</string>
+    <string name="brand_subtitle">CTET &amp; UPTET 2024-2025</string>
+
+    <!-- Navigation -->
+    <string name="nav_home">Subjects</string>
+    <string name="nav_practice">Practice</string>
+    <string name="nav_analytics">Analytics</string>
+    <string name="nav_settings">Settings</string>
+
+    <!-- Subject Titles -->
+    <string name="subject_cdp">Child Development and Pedagogy</string>
+    <string name="subject_cdp_hi">बाल विकास एवं शिक्षण शास्त्र</string>
+    <string name="subject_hindi">Hindi Language &amp; Pedagogy</string>
+    <string name="subject_hindi_hi">हिन्दी भाषा एवं शिक्षण शास्त्र</string>
+    <string name="subject_math">Mathematics &amp; Pedagogy</string>
+    <string name="subject_math_hi">गणित एवं शिक्षण शास्त्र</string>
+    <string name="subject_evs">Environmental Studies &amp; Pedagogy</string>
+    <string name="subject_evs_hi">पर्यावरण अध्ययन एवं शिक्षण शास्त्र</string>
+    <string name="subject_english">English Language &amp; Pedagogy</string>
+    <string name="subject_english_hi">अंग्रेजी भाषा एवं शिक्षण शास्त्र</string>
+    <string name="subject_sanskrit">Sanskrit Language &amp; Pedagogy</string>
+    <string name="subject_sanskrit_hi">संस्कृत भाषा एवं शिक्षण शास्त्र</string>
+
+    <!-- Tabs -->
+    <string name="tab_concept">Concept</string>
+    <string name="tab_short_notes">Short Notes</string>
+    <string name="tab_mcq">MCQ Quiz</string>
+    <string name="tab_pyq">PYQ Bank</string>
+    <string name="tab_practice">Worksheet</string>
+
+    <!-- Quiz & Practice -->
+    <string name="action_submit">Submit</string>
+    <string name="action_next">Next</string>
+    <string name="action_prev">Previous</string>
+    <string name="action_check_answer">Check Answer</string>
+    <string name="action_show_explanation">View Detailed Explanation</string>
+    <string name="action_hide_explanation">Hide Explanation</string>
+    <string name="action_bookmark">Bookmark</string>
+    <string name="action_copy_notes">Copy Notes</string>
+    <string name="action_share">Share</string>
+    <string name="copied_to_clipboard">Notes copied to clipboard!</string>
+
+    <!-- Mock Test -->
+    <string name="mock_test_title">CTET/UPTET Full Mock Test</string>
+    <string name="mock_test_desc">150 Questions • 150 Minutes • Paper 1 &amp; 2 Standard</string>
+    <string name="start_mock_test">Start Full Exam Simulation</string>
+    <string name="time_remaining">Time Left: </string>
+    <string name="mark_for_review">Mark for Review</string>
+    <string name="confirm_submit_title">Submit Test?</string>
+    <string name="confirm_submit_msg">Are you sure you want to finish the exam? Unanswered questions will receive 0 marks.</string>
+
+    <!-- Sync & Settings -->
+    <string name="sync_title">GitHub Content Sync</string>
+    <string name="sync_desc">Fetch latest pedagogical notes, PYQs, and MCQs directly from repository.</string>
+    <string name="btn_check_updates">Check for Updates</string>
+    <string name="sync_status_up_to_date">Content is up to date (Version %1$s)</string>
+    <string name="sync_status_updating">Updating content (%1$d%%)...</string>
+    <string name="sync_success">Content successfully updated to version %1$s!</string>
+    <string name="sync_error">Unable to sync: Working with local offline assets.</string>
+    <string name="last_synced">Last Synced: %1$s</string>
+    <string name="local_version">Local Manifest Version: %1$s</string>
+    <string name="theme_title">App Appearance</string>
+    <string name="storage_info">Storage &amp; Database</string>
+
+    <!-- Splash -->
+    <string name="splash_loading">Preparing pedagogical repository...</string>
+</resources>

@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pedagogy.local/schemas/subtopic.schema.json",
+  "title": "SubtopicNode",
+  "type": "object",
+  "required": [
+    "id",
+    "code",
+    "micro_topics"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^ST\\d{2}_\\d{2}$"
+    },
+    "code": {
+      "type": "string"
+    },
+    "micro_topics": {
+      "type": "array",
+      "items": {
+        "$ref": "microtopic.schema.json"
+      },
+      "minItems": 1
+    }
+  }
+}

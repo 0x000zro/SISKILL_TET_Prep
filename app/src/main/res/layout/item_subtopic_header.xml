@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingStart="16dp"
+    android:paddingTop="10dp"
+    android:paddingEnd="8dp"
+    android:paddingBottom="6dp">
+
+    <View
+        android:layout_width="4dp"
+        android:layout_height="18dp"
+        android:background="@color/secondary" />
+
+    <TextView
+        android:id="@+id/tvSubtopicTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:fontFamily="sans-serif-medium"
+        android:text="Subtopic 01: Title"
+        android:textColor="@color/on_surface"
+        android:textSize="13sp" />
+
+</LinearLayout>

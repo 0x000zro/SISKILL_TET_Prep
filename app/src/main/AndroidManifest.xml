@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <application
+        android:name=".TetPrepApplication"
+        android:allowBackup="true"
+        android:icon="@drawable/ic_siskill_logo"
+        android:label="@string/app_name"
+        android:roundIcon="@drawable/ic_siskill_logo"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.TetPrep">
+
+        <activity
+            android:name=".ui.splash.SplashActivity"
+            android:exported="true"
+            android:theme="@style/Theme.TetPrep.Splash">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".ui.main.MainActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustPan" />
+
+        <activity
+            android:name=".ui.topic.TopicExplorerActivity"
+            android:exported="false"
+            android:parentActivityName=".ui.main.MainActivity" />
+
+        <activity
+            android:name=".ui.study.MicroStudyActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".ui.mock.MockTestActivity"
+            android:exported="false" />
+
+    </application>
+
+</manifest>

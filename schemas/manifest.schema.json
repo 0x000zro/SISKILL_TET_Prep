@@ -1,0 +1,95 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pedagogy.local/schemas/manifest.schema.json",
+  "title": "MasterManifest",
+  "type": "object",
+  "required": [
+    "exam",
+    "paper",
+    "version",
+    "subjects"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "exam": {
+      "type": "string",
+      "enum": [
+        "UPTET_CTET",
+        "UPTET",
+        "CTET"
+      ]
+    },
+    "paper": {
+      "type": "string",
+      "enum": [
+        "Paper_1",
+        "Paper_2",
+        "Paper_1_and_2"
+      ]
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "active_subjects_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "total_planned_subjects": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "subjects": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "name_en",
+          "name_hi",
+          "directory",
+          "manifest_path",
+          "status"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "enum": [
+              "CDP",
+              "HINDI",
+              "MATH",
+              "EVS",
+              "ENG",
+              "SAN"
+            ]
+          },
+          "name_en": {
+            "type": "string"
+          },
+          "name_hi": {
+            "type": "string"
+          },
+          "directory": {
+            "type": "string"
+          },
+          "manifest_path": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ready",
+              "planned",
+              "deprecated"
+            ]
+          },
+          "total_topics": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      }
+    }
+  }
+}

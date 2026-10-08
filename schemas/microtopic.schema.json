@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pedagogy.local/schemas/microtopic.schema.json",
+  "title": "MicrotopicLeafNode",
+  "type": "object",
+  "required": [
+    "micro_id",
+    "folder",
+    "assets"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "micro_id": {
+      "type": "string",
+      "pattern": "^ST\\d{2}_\\d{2}_M\\d{2}$"
+    },
+    "folder": {
+      "type": "string"
+    },
+    "assets": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "Concept",
+          "Short_Notes",
+          "PYQ",
+          "MCQ",
+          "Practice"
+        ]
+      },
+      "minItems": 5,
+      "uniqueItems": true
+    }
+  }
+}

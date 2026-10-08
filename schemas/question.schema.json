@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pedagogy.local/schemas/question.schema.json",
+  "title": "QuestionModel",
+  "type": "object",
+  "required": [
+    "id",
+    "question",
+    "options",
+    "answer",
+    "explanation",
+    "exam_tag"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "question": {
+      "type": "string",
+      "minLength": 5
+    },
+    "options": {
+      "type": "object",
+      "required": [
+        "A",
+        "B",
+        "C",
+        "D"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "A": {
+          "type": "string",
+          "minLength": 1
+        },
+        "B": {
+          "type": "string",
+          "minLength": 1
+        },
+        "C": {
+          "type": "string",
+          "minLength": 1
+        },
+        "D": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "answer": {
+      "type": "string",
+      "enum": [
+        "A",
+        "B",
+        "C",
+        "D"
+      ]
+    },
+    "explanation": {
+      "type": "string"
+    },
+    "exam_tag": {
+      "type": "string"
+    },
+    "bloom_taxonomy_level": {
+      "type": "string",
+      "enum": [
+        "Remembering",
+        "Understanding",
+        "Applying",
+        "Analyzing",
+        "Evaluating",
+        "Creating"
+      ]
+    }
+  }
+}

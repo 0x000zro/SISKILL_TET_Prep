@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://pedagogy.local/schemas/pyq.schema.json",
+  "title": "PreviousYearQuestionContainer",
+  "type": "object",
+  "required": [
+    "micro_topic_id",
+    "type",
+    "total_questions",
+    "questions"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "micro_topic_id": {
+      "type": "string"
+    },
+    "type": {
+      "type": "string",
+      "const": "PYQ"
+    },
+    "total_questions": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "questions": {
+      "type": "array",
+      "items": {
+        "allOf": [
+          {
+            "$ref": "question.schema.json"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "exam_year": {
+                "type": "integer",
+                "minimum": 2011,
+                "maximum": 2026
+              },
+              "shift": {
+                "type": "string"
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+}

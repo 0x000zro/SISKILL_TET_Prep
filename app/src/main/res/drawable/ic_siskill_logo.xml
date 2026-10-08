@@ -1,0 +1,22 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="96dp"
+    android:height="96dp"
+    android:viewportWidth="96"
+    android:viewportHeight="96">
+    <!-- Outer shield / crest -->
+    <path
+        android:fillColor="#1A237E"
+        android:pathData="M48,4L12,20v28c0,22.2 15.3,42.9 36,48 20.7,-5.1 36,-25.8 36,-48V20L48,4z" />
+    <!-- Inner accent shield -->
+    <path
+        android:fillColor="#00897B"
+        android:pathData="M48,12L20,24.4v23.6c0,17.4 12,33.7 28,37.7 16,-4 28,-20.3 28,-37.7V24.4L48,12z" />
+    <!-- Graduation Cap / Intellect Emblem -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M48,28L28,38l20,10 16,-8v10h4V38L48,28z M35,47.5v8c0,5.5 5.8,10 13,10s13,-4.5 13,-10v-8l-13,6.5 -13,-6.5z" />
+    <!-- Star of Excellence -->
+    <path
+        android:fillColor="#FFD54F"
+        android:pathData="M48,50l2.5,5.1 5.6,0.8 -4.1,4 1,5.6 -5,-2.6 -5,2.6 1,-5.6 -4.1,-4 5.6,-0.8z" />
+</vector>
