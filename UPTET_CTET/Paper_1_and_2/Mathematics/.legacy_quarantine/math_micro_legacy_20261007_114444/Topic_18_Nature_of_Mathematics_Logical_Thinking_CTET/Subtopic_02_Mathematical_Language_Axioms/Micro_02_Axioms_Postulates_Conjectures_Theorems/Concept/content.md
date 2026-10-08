@@ -1,3 +1,0 @@
-# Axioms_Postulates_Conjectures_Theorems
-
-*गणित विषयवस्तु संकलन प्रगति पर है।*

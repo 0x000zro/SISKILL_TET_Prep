@@ -1,3 +1,0 @@
-# Currency_Billing_Transactions
-
-*गणित विषयवस्तु संकलन प्रगति पर है।*

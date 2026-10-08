@@ -1,3 +1,0 @@
-# Apadana_Bhitrarthanam_Jugupsi_Panchami
-
-*संस्कृत विषयवस्तु संकलन प्रगति पर है।*
