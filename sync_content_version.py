@@ -11,8 +11,8 @@ import subprocess
 import sys
 from pathlib import Path
 
-MASTER_MANIFEST_PATH = Path("UPTET_CTET/Paper_1_and_2/master_manifest.json")
-BRAND_CONFIG_PATH = Path("UPTET_CTET/Paper_1_and_2/brand_config.json")
+MASTER_MANIFEST_PATH = Path("app/src/main/assets/bundled_content/master_manifest.json")
+BRAND_CONFIG_PATH = Path("app/src/main/assets/bundled_content/brand_config.json")
 
 def bump_semver(version: str) -> str:
     parts = version.split(".")

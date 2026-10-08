@@ -13,11 +13,15 @@ object Constants {
     const val DEFAULT_GITHUB_REPO = "SISKILL_TET_Prep"
     const val DEFAULT_GITHUB_BRANCH = "main"
 
+    // Remote root relative path for content sync on GitHub
+    const val REMOTE_CONTENT_BASE_PATH = "app/src/main/assets/bundled_content"
+    const val REMOTE_CONTENT_FALLBACK_PATH = "UPTET_CTET/Paper_1_and_2"
+
     fun getRawGitHubBaseUrl(owner: String = DEFAULT_GITHUB_OWNER, repo: String = DEFAULT_GITHUB_REPO, branch: String = DEFAULT_GITHUB_BRANCH): String =
-        "https://raw.githubusercontent.com/0x000zro/SISKILL_TET_Prep/main/"
+        "https://raw.githubusercontent.com/$owner/$repo/$branch/"
 
     fun getCdnFallbackBaseUrl(owner: String = DEFAULT_GITHUB_OWNER, repo: String = DEFAULT_GITHUB_REPO, branch: String = DEFAULT_GITHUB_BRANCH): String =
-        "https://cdn.jsdelivr.net/gh/0x000zro/SISKILL_TET_Prep@main/"
+        "https://cdn.jsdelivr.net/gh/$owner/$repo@$branch/"
 
     // Leaf asset keys
     const val ASSET_CONCEPT = "Concept"

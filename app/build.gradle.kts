@@ -49,13 +49,19 @@ android {
 }
 
 tasks.register<Copy>("syncBundledContent") {
-    description = "Syncs root pedagogical repository and schemas into assets for offline-first bootstrapping."
-    from("${rootProject.projectDir}/UPTET_CTET/Paper_1_and_2") {
-        into("bundled_content")
-        exclude("**/.*")
+    description = "Syncs root pedagogical repository and schemas into assets for offline-first bootstrapping if present."
+    val contentSource = file("${rootProject.projectDir}/UPTET_CTET/Paper_1_and_2")
+    if (contentSource.exists()) {
+        from(contentSource) {
+            into("bundled_content")
+            exclude("**/.*")
+        }
     }
-    from("${rootProject.projectDir}/schemas") {
-        into("bundled_content/schemas")
+    val schemasSource = file("${rootProject.projectDir}/schemas")
+    if (schemasSource.exists()) {
+        from(schemasSource) {
+            into("bundled_content/schemas")
+        }
     }
     into("${projectDir}/src/main/assets")
 }

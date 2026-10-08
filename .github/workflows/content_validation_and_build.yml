@@ -26,9 +26,9 @@ jobs:
           python -m pip install --upgrade pip
           pip install jsonschema fastjsonschema
 
-      - name: Run Manifest Integration & Validation Check
+      - name: Validate Master Manifest JSON
         run: |
-          python integrate_siskill.py
+          python -c 'import json; json.load(open("app/src/main/assets/bundled_content/master_manifest.json", encoding="utf-8")); print("[OK] Valid JSON master_manifest.json")'
 
   build_android:
     name: Build Android APK

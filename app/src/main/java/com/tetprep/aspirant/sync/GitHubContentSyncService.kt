@@ -46,14 +46,26 @@ class GitHubContentSyncService(
         encodeDefaults = true
     }
 
+    @Volatile
+    private var lastErrorReason: String = "Unable to reach remote repository. Check internet connection."
+
     suspend fun syncContent(
         onProgress: (Int, String) -> Unit = { _, _ -> }
     ): SyncResult = withContext(Dispatchers.IO) {
         try {
             onProgress(5, "Connecting to GitHub repository...")
-            val masterRelativePath = "UPTET_CTET/Paper_1_and_2/master_manifest.json"
-            val masterJson = fetchFromRemoteWithFallback(masterRelativePath)
-                ?: return@withContext SyncResult.Failure("Unable to reach remote repository. Check internet connection.")
+            var effectiveBasePath = Constants.REMOTE_CONTENT_BASE_PATH
+            var masterJson = fetchFromRemoteWithFallback("$effectiveBasePath/master_manifest.json")
+
+            if (masterJson == null) {
+                val fallbackPath = Constants.REMOTE_CONTENT_FALLBACK_PATH
+                masterJson = fetchFromRemoteWithFallback("$fallbackPath/master_manifest.json")
+                if (masterJson != null) {
+                    effectiveBasePath = fallbackPath
+                } else {
+                    return@withContext SyncResult.Failure(lastErrorReason)
+                }
+            }
 
             onProgress(15, "Verifying manifest version...")
             val remoteManifest = json.decodeFromString<MasterManifest>(masterJson)
@@ -95,7 +107,7 @@ class GitHubContentSyncService(
                 )
 
                 // Fetch subject manifest
-                val subjectPath = "UPTET_CTET/Paper_1_and_2/${subjectItem.manifestPath}"
+                val subjectPath = "$effectiveBasePath/${subjectItem.manifestPath}"
                 val subjectJson = fetchFromRemoteWithFallback(subjectPath)
                 if (subjectJson != null) {
                     try {
@@ -144,7 +156,8 @@ class GitHubContentSyncService(
                                     val microNameHi = microModel.nameHi ?: microSlug
                                     val microFolder = microModel.folder ?: "Micro_${mIdx + 1}_$microSlug"
 
-                                    val basePath = "UPTET_CTET/Paper_1_and_2/${subjectItem.directory}/$topicFolder/$subtopicFolder/$microFolder"
+                                    val basePath = "$effectiveBasePath/${subjectItem.directory}/$topicFolder/$subtopicFolder/$microFolder"
+                                    val localAssetBasePath = "${Constants.ASSETS_BUNDLED_PATH}/${subjectItem.directory}/$topicFolder/$subtopicFolder/$microFolder"
                                     val assetsList = if (microModel.assets.isNotEmpty()) microModel.assets else listOf("Concept", "Short_Notes", "MCQ", "PYQ", "Practice")
                                     val assetsJsonStr = json.encodeToString(assetsList)
 
@@ -158,7 +171,12 @@ class GitHubContentSyncService(
                                             nameHi = microNameHi,
                                             folder = microFolder,
                                             orderNum = microModel.order ?: (mIdx + 1),
-                                            assetsJson = assetsJsonStr
+                                            assetsJson = assetsJsonStr,
+                                            conceptPath = "$localAssetBasePath/Concept/content.md",
+                                            shortNotesPath = "$localAssetBasePath/Short_Notes/content.md",
+                                            practicePath = "$localAssetBasePath/Practice/content.md",
+                                            mcqPath = "$localAssetBasePath/MCQ/content.json",
+                                            pyqPath = "$localAssetBasePath/PYQ/content.json"
                                         )
                                     )
 
@@ -277,11 +295,18 @@ class GitHubContentSyncService(
                     response.body?.string()
                 } else {
                     Log.w(TAG, "HTTP ${response.code} for $url")
+                    val explanation = when (response.code) {
+                        404 -> "HTTP 404: Repository or file not found.\n\nMake sure the GitHub repository '${Constants.DEFAULT_GITHUB_REPO}' is Public and pushed to branch '${Constants.DEFAULT_GITHUB_BRANCH}'."
+                        403 -> "HTTP 403: Forbidden.\n\nIf the GitHub repository is set to Private, change visibility to Public in GitHub repository settings."
+                        else -> "HTTP ${response.code} received from GitHub."
+                    }
+                    lastErrorReason = "$explanation\n\nAttempted URL:\n$url"
                     null
                 }
             }
         } catch (e: IOException) {
             Log.w(TAG, "Connection failed for $url: ${e.message}")
+            lastErrorReason = "Connection failed: ${e.localizedMessage ?: e.message ?: "Network unreachable"}\n\nAttempted URL:\n$url"
             null
         }
     }
