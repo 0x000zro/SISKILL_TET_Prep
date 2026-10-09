@@ -30,6 +30,9 @@ interface QuestionDao {
     @Query("SELECT COUNT(*) FROM questions")
     suspend fun countQuestions(): Int
 
+    @Query("DELETE FROM questions WHERE microTopicId = :microTopicId AND type = :type")
+    suspend fun deleteQuestionsByMicroTopicAndType(microTopicId: String, type: String)
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertQuestions(questions: List<QuestionEntity>)
 }

@@ -262,3 +262,113 @@
 >
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────
 ? for shortcuts
+  Local updates succeeded because they are bundled into the APK assets and loaded into the database on s...
+  Here is the analysis of the data synchronization logic, the explanation of the cache directory paths,
+  and the complete implementation details for the sync fix and redesigned MCQ/PYQ sections.
+  ──────
+  ### Part 1: Data Synchronization Analysis & Fix
+
+  #### 1. Exact Directory Path of Downloaded content.json
+
+  • Before our fix: The app did not save content.json to the filesystem at all. Unlike .md files, which
+  GitHubContentSyncService wrote to disk, content.json was only decoded in memory and attempted to be
+  inserted into the Room database.
+  • Now (Fixed runtime path): Downloaded content.json files from GitHub are saved directly into the
+  application's internal files directory via context.filesDir (or context.getFilesDir()):
+    /data/data/com.tetprep.
+  aspirant/files/bundled_content/<Subject_Directory>/<Topic_Folder>/<Subtopic_Folder>/<Micro_Folder>/MCQ/
+  content.json
+    /data/data/com.tetprep.
+  aspirant/files/bundled_content/<Subject_Directory>/<Topic_Folder>/<Subtopic_Folder>/<Micro_Folder>/PYQ/
+  content.json
+  (e.g., /data/data/com.tetprep.
+  aspirant/files/bundled_content/Child_Development_and_Pedagogy/Topic_01_Growth_and_Development_Concepts/
+  Subtopic_01_Meaning_and_Definitions/Micro_01_Growth_Meaning/MCQ/content.json)
+  ──────
+  #### 2. Why Local Updates Worked vs. Why GitHub Fetches Failed
+
+   Scenario                               | What Actually Happened
+  ----------------------------------------|--------------------------------------------------------------
+   Why Antigravity's Local Updates Worked | When editing files locally in the project repository,
+                                          | Gradle's syncBundledContent pre-build task bundles the
+                                          | updated JSON directly into the APK assets
+                                          | (app/src/main/assets/bundled_content/). On app startup or
+                                          | database preload, AssetPreloader reads directly from the APK
+                                          | bundled assets via context.assets.open() into the Room
+                                          | database.
+   Why GitHub Fetches Failed for JSON     | 1. No Local File Cache: .md files were written to
+                                          | context.filesDir and
+                                          | PedagogyRepository.readMarkdownContent() prioritized
+                                          | context.filesDir over APK assets. In contrast, content.json
+                                          | was never written to context.filesDir.2. No Dynamic
+                                          | Repository Loader: When loading questions, QuizFragment and
+                                          | PyqFragment only queried Room DB
+                                          | (getQuestionsByMicroTopicAndType), never checking for
+                                          | downloaded JSON files on disk.3. Version Check Gate:
+                                          | GitHubContentSyncService checked
+                                          | isRemoteVersionNewer(remoteManifest.version, localVersion).
+                                          | If content.json was updated on GitHub without bumping the
+                                          | version field in master_manifest.json, background sync
+                                          | aborted immediately with AlreadyUpToDate.4. Strict
+                                          | Deserialization Failures: In QuestionJsonModel, fields like
+                                          | exam_tag were required without defaults, and schemas
+                                          | containing integer exam_year or shift caused Kotlinx
+                                          | serialization to throw an exception that was silently caught
+                                          | in catch (e: Exception).
+  ──────
+  #### 3. How the Sync & Download Code Was Fixed
+
+  1. Direct Cache Overwrite in GitHubContentSyncService.kt:
+  When downloading MCQ and PYQ JSON from GitHub, the raw strings are written to File(context.filesDir,
+  "$localAssetBasePath/MCQ/content.json") and File(context.filesDir, "$localAssetBasePath/PYQ/content.
+  json"), creating parent directories and overwriting existing caches.
+  2. Prioritization Hierarchy in PedagogyRepository.kt:
+  Added loadQuestionsForMicroTopic(microTopicId, type) and readJsonContent(assetPath):
+      • Priority 1 (OTA GitHub Cache): Checks File(context.filesDir, assetPath) first. If present, it
+      loads the downloaded questions, updates Room DB, and displays them.
+      • Priority 2 (APK Bundled Assets): Falls back to context.assets.open(assetPath).
+      • Priority 3 (Room DB): Falls back to Room cached database records.
+      • Priority 4 (Fallback Bank): Returns generic pedagogy questions if unpopulated.
+  3. Fault-Tolerant JSON Parser (PedagogyContentParser.kt):
+  Handles options as objects ({"A": ..., "B": ...}) or lists, normalizes answers (1..4 to A..D), and
+  formats exam tags and years cleanly (e.g. 'UPTET 2016').
+  4. Room Database Cleanup (QuestionDao.kt):
+  Added deleteQuestionsByMicroTopicAndType so synced questions atomically replace stale entries.
+  ──────
+  ### Part 2: Redesigned MCQ and PYQ UI & Logic
+
+  Both the MCQ and PYQ sections have been redesigned from single-question pagination to a fully
+  scrollable, smooth feed layout.
+
+  #### Strict Question Card Structure (item_scrollable_question.xml)
+
+  Each question card displays the exact required sequence:
+
+  1. Question text: Displayed prominently at the top with clear typography and question counter badge.
+  2. Options (Option 1, Option 2, Option 3, Option 4):
+      • Option 1: [Option A text]
+      • Option 2: [Option B text]
+      • Option 3: [Option C text]
+      • Option 4: [Option D text]
+      • Interactive Practice: Users can tap any option to self-test. The selected option turns red if
+      wrong or green if correct, while the correct option is highlighted in green.
+  3. Correct Answer: Displayed in a dedicated verified answer box:
+      • ✓ Correct Answer: Option [X] — [Option Text]
+  4. Exam Tag / Source (e.g., 'UPTET 2016'):
+      • Displayed in a styled source tag: Exam Tag / Source: UPTET 2016 (or CTET Official PYQ 2023, etc.).
+  5. Detailed Explanation:
+      • Displayed in a full rationale container: Detailed Explanation: followed by the pedagogical
+      explanation and Bloom's taxonomy notes.
+
+
+  #### Key Files Updated
+
+  • GitHubContentSyncService.kt: Overwrites local file cache in context.filesDir for both MCQ and PYQ
+  content.json.
+  • PedagogyRepository.kt: Added readJsonContent and loadQuestionsForMicroTopic with OTA cache
+  prioritization.
+  • PedagogyContentParser.kt: Robust parser resilient to schema variations.
+  • ScrollableQuestionsAdapter.kt: RecyclerView adapter presenting the structured 5-part layout for
+  questions with interactive option selection and bookmarking.
+  • QuizFragment.kt & fragment_quiz.xml: Redesigned MCQ tab with a scrollable list view.
+  • PyqFragment.kt & fragment_pyq.xml: Redesigned PYQ tab with a scrollable list view.

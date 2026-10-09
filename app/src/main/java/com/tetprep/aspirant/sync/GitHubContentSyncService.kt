@@ -185,29 +185,21 @@ class GitHubContentSyncService(
                                     val mcqRemotePath = "$basePath/MCQ/content.json"
                                     fetchFromRemoteWithFallback(mcqRemotePath)?.let { mcqStr ->
                                         try {
-                                            val mcqData = json.decodeFromString<MicroContentJson>(mcqStr)
-                                            mcqData.questions.forEach { q ->
-                                                questionEntities.add(
-                                                    QuestionEntity(
-                                                        id = q.id,
-                                                        microTopicId = microUniqueId,
-                                                        subjectId = subjectItem.id,
-                                                        type = "MCQ",
-                                                        question = q.question,
-                                                        optionA = q.options.A,
-                                                        optionB = q.options.B,
-                                                        optionC = q.options.C,
-                                                        optionD = q.options.D,
-                                                        answer = q.answer,
-                                                        explanation = q.explanation,
-                                                        examTag = q.examTag,
-                                                        bloomTaxonomyLevel = q.bloomTaxonomyLevel,
-                                                        year = q.year
-                                                    )
-                                                )
-                                            }
+                                            // Overwrite old local cache in context.filesDir
+                                            val localMcqFile = File(context.filesDir, "$localAssetBasePath/MCQ/content.json")
+                                            localMcqFile.parentFile?.mkdirs()
+                                            localMcqFile.writeText(mcqStr, Charsets.UTF_8)
+                                            Log.d(TAG, "Cached remote MCQ content.json to ${localMcqFile.absolutePath}")
+
+                                            val parsedQuestions = com.tetprep.aspirant.data.parser.PedagogyContentParser.parseQuestions(
+                                                jsonString = mcqStr,
+                                                microTopicId = microUniqueId,
+                                                subjectId = subjectItem.id,
+                                                defaultType = "MCQ"
+                                            )
+                                            questionEntities.addAll(parsedQuestions)
                                         } catch (e: Exception) {
-                                            Log.w(TAG, "Error parsing remote MCQ for $microUniqueId", e)
+                                            Log.w(TAG, "Error caching/parsing remote MCQ for $microUniqueId", e)
                                         }
                                     }
 
@@ -215,29 +207,21 @@ class GitHubContentSyncService(
                                     val pyqRemotePath = "$basePath/PYQ/content.json"
                                     fetchFromRemoteWithFallback(pyqRemotePath)?.let { pyqStr ->
                                         try {
-                                            val pyqData = json.decodeFromString<MicroContentJson>(pyqStr)
-                                            pyqData.questions.forEach { q ->
-                                                questionEntities.add(
-                                                    QuestionEntity(
-                                                        id = q.id,
-                                                        microTopicId = microUniqueId,
-                                                        subjectId = subjectItem.id,
-                                                        type = "PYQ",
-                                                        question = q.question,
-                                                        optionA = q.options.A,
-                                                        optionB = q.options.B,
-                                                        optionC = q.options.C,
-                                                        optionD = q.options.D,
-                                                        answer = q.answer,
-                                                        explanation = q.explanation,
-                                                        examTag = q.examTag,
-                                                        bloomTaxonomyLevel = q.bloomTaxonomyLevel,
-                                                        year = q.year
-                                                    )
-                                                )
-                                            }
+                                            // Overwrite old local cache in context.filesDir
+                                            val localPyqFile = File(context.filesDir, "$localAssetBasePath/PYQ/content.json")
+                                            localPyqFile.parentFile?.mkdirs()
+                                            localPyqFile.writeText(pyqStr, Charsets.UTF_8)
+                                            Log.d(TAG, "Cached remote PYQ content.json to ${localPyqFile.absolutePath}")
+
+                                            val parsedQuestions = com.tetprep.aspirant.data.parser.PedagogyContentParser.parseQuestions(
+                                                jsonString = pyqStr,
+                                                microTopicId = microUniqueId,
+                                                subjectId = subjectItem.id,
+                                                defaultType = "PYQ"
+                                            )
+                                            questionEntities.addAll(parsedQuestions)
                                         } catch (e: Exception) {
-                                            Log.w(TAG, "Error parsing remote PYQ for $microUniqueId", e)
+                                            Log.w(TAG, "Error caching/parsing remote PYQ for $microUniqueId", e)
                                         }
                                     }
 
@@ -327,7 +311,7 @@ class GitHubContentSyncService(
     }
 
     private fun isRemoteVersionNewer(remoteVersion: String, localVersion: String): Boolean {
-        if (localVersion == "0.0.0") return true
+        if (localVersion == "0.0.0" || remoteVersion != localVersion) return true
         val rParts = remoteVersion.split(".").mapNotNull { it.toIntOrNull() }
         val lParts = localVersion.split(".").mapNotNull { it.toIntOrNull() }
         for (i in 0 until minOf(rParts.size, lParts.size)) {

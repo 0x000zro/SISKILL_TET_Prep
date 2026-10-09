@@ -51,6 +51,54 @@ class PedagogyRepository(
     fun getRandomPracticeQuestions(subjectId: String, type: String, limit: Int = 30): Flow<List<QuestionEntity>> =
         database.questionDao().getRandomQuestionsBySubject(subjectId, type, limit)
 
+    // Load questions prioritizing downloaded OTA filesDir cache over APK assets and Room DB
+    suspend fun loadQuestionsForMicroTopic(
+        microTopicId: String,
+        type: String // "MCQ" or "PYQ"
+    ): List<QuestionEntity> = withContext(Dispatchers.IO) {
+        val microTopic = database.microTopicDao().getMicroTopicByIdDirect(microTopicId)
+        val assetPath = when (type.uppercase()) {
+            "PYQ" -> microTopic?.pyqPath
+            else -> microTopic?.mcqPath
+        }
+        val subjectId = microTopic?.subjectId ?: "CDP"
+
+        // Priority 1 & 2: Read from Synced Local Storage (context.filesDir) or APK Assets
+        val jsonString = readJsonContent(assetPath)
+        if (!jsonString.isNullOrBlank()) {
+            val parsedQuestions = com.tetprep.aspirant.data.parser.PedagogyContentParser.parseQuestions(
+                jsonString = jsonString,
+                microTopicId = microTopicId,
+                subjectId = subjectId,
+                defaultType = type.uppercase()
+            )
+            if (parsedQuestions.isNotEmpty()) {
+                // Sync cleanly with Room database cache
+                try {
+                    database.questionDao().deleteQuestionsByMicroTopicAndType(microTopicId, type.uppercase())
+                    database.questionDao().insertQuestions(parsedQuestions)
+                } catch (e: Exception) {
+                    // Ignore DB cache errors
+                }
+                return@withContext parsedQuestions
+            }
+        }
+
+        // Priority 3: Fallback to Room database cached questions
+        val dbQuestions = database.questionDao().getQuestionsByMicroTopicAndTypeDirect(microTopicId, type.uppercase())
+        if (dbQuestions.isNotEmpty()) {
+            return@withContext dbQuestions
+        }
+
+        // Priority 4: Fallback to random practice questions for this type
+        val genericQuestions = database.questionDao().getRandomQuestionsByTypeDirect(type.uppercase(), 5)
+        if (genericQuestions.isNotEmpty()) {
+            return@withContext genericQuestions
+        }
+
+        emptyList()
+    }
+
     // Progress
     fun getProgress(microTopicId: String, assetType: String): Flow<UserProgressEntity?> =
         database.userProgressDao().getProgress(microTopicId, assetType)
@@ -144,6 +192,32 @@ class PedagogyRepository(
             }
         } catch (e: Exception) {
             "*Content is being compiled. Please check for updates.*"
+        }
+    }
+
+    // JSON file reader: checks synced local storage first, then falls back to bundled APK assets
+    suspend fun readJsonContent(assetPath: String?): String? = withContext(Dispatchers.IO) {
+        if (assetPath == null) return@withContext null
+
+        // 1. Check if an updated file was downloaded via Over-The-Air GitHub Sync
+        val syncedFile = java.io.File(context.filesDir, assetPath)
+        if (syncedFile.exists() && syncedFile.length() > 0) {
+            try {
+                return@withContext syncedFile.readText(Charsets.UTF_8)
+            } catch (e: Exception) {
+                // fallback to APK assets
+            }
+        }
+
+        // 2. Fallback to bundled APK assets
+        try {
+            context.assets.open(assetPath).use { inputStream ->
+                InputStreamReader(inputStream, Charsets.UTF_8).use { reader ->
+                    reader.readText()
+                }
+            }
+        } catch (e: Exception) {
+            null
         }
     }
 }

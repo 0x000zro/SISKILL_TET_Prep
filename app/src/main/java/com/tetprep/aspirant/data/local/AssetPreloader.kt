@@ -155,27 +155,13 @@ class AssetPreloader(
                                         // Try reading bundled MCQ content.json
                                         readAssetFile("$basePath/MCQ/content.json")?.let { mcqStr ->
                                             try {
-                                                val mcqData = json.decodeFromString<MicroContentJson>(mcqStr)
-                                                mcqData.questions.forEach { q ->
-                                                    questionEntities.add(
-                                                        QuestionEntity(
-                                                            id = q.id,
-                                                            microTopicId = microUniqueId,
-                                                            subjectId = subjectItem.id,
-                                                            type = "MCQ",
-                                                            question = q.question,
-                                                            optionA = q.options.A,
-                                                            optionB = q.options.B,
-                                                            optionC = q.options.C,
-                                                            optionD = q.options.D,
-                                                            answer = q.answer,
-                                                            explanation = q.explanation,
-                                                            examTag = q.examTag,
-                                                            bloomTaxonomyLevel = q.bloomTaxonomyLevel,
-                                                            year = q.year
-                                                        )
-                                                    )
-                                                }
+                                                val parsedQuestions = com.tetprep.aspirant.data.parser.PedagogyContentParser.parseQuestions(
+                                                    jsonString = mcqStr,
+                                                    microTopicId = microUniqueId,
+                                                    subjectId = subjectItem.id,
+                                                    defaultType = "MCQ"
+                                                )
+                                                questionEntities.addAll(parsedQuestions)
                                             } catch (e: Exception) {
                                                 Log.w(TAG, "Error parsing bundled MCQ for $microUniqueId", e)
                                             }
@@ -184,27 +170,13 @@ class AssetPreloader(
                                         // Try reading bundled PYQ content.json
                                         readAssetFile("$basePath/PYQ/content.json")?.let { pyqStr ->
                                             try {
-                                                val pyqData = json.decodeFromString<MicroContentJson>(pyqStr)
-                                                pyqData.questions.forEach { q ->
-                                                    questionEntities.add(
-                                                        QuestionEntity(
-                                                            id = q.id,
-                                                            microTopicId = microUniqueId,
-                                                            subjectId = subjectItem.id,
-                                                            type = "PYQ",
-                                                            question = q.question,
-                                                            optionA = q.options.A,
-                                                            optionB = q.options.B,
-                                                            optionC = q.options.C,
-                                                            optionD = q.options.D,
-                                                            answer = q.answer,
-                                                            explanation = q.explanation,
-                                                            examTag = q.examTag,
-                                                            bloomTaxonomyLevel = q.bloomTaxonomyLevel,
-                                                            year = q.year
-                                                        )
-                                                    )
-                                                }
+                                                val parsedQuestions = com.tetprep.aspirant.data.parser.PedagogyContentParser.parseQuestions(
+                                                    jsonString = pyqStr,
+                                                    microTopicId = microUniqueId,
+                                                    subjectId = subjectItem.id,
+                                                    defaultType = "PYQ"
+                                                )
+                                                questionEntities.addAll(parsedQuestions)
                                             } catch (e: Exception) {
                                                 Log.w(TAG, "Error parsing bundled PYQ for $microUniqueId", e)
                                             }
