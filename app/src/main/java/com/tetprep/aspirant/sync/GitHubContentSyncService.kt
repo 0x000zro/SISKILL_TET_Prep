@@ -50,6 +50,7 @@ class GitHubContentSyncService(
     private var lastErrorReason: String = "Unable to reach remote repository. Check internet connection."
 
     suspend fun syncContent(
+        forceSync: Boolean = false,
         onProgress: (Int, String) -> Unit = { _, _ -> }
     ): SyncResult = withContext(Dispatchers.IO) {
         try {
@@ -71,15 +72,15 @@ class GitHubContentSyncService(
             val remoteManifest = json.decodeFromString<MasterManifest>(masterJson)
             val currentVersion = preferences.localVersion
 
-            if (!isRemoteVersionNewer(remoteManifest.version, currentVersion)) {
+            if (!forceSync && !isRemoteVersionNewer(remoteManifest.version, currentVersion)) {
                 preferences.lastSyncTimestamp = System.currentTimeMillis()
                 preferences.lastSyncStatus = "Up to date ($currentVersion)"
                 onProgress(100, "Content is already up to date.")
                 return@withContext SyncResult.AlreadyUpToDate(currentVersion)
             }
 
-            Log.i(TAG, "New version detected: Remote=${remoteManifest.version}, Local=$currentVersion. Starting sync.")
-            onProgress(25, "New version ${remoteManifest.version} found! Downloading subject manifests...")
+            Log.i(TAG, "Sync active: Remote=${remoteManifest.version}, Local=$currentVersion, Force=$forceSync. Starting sync.")
+            onProgress(25, "Synchronizing content (${remoteManifest.version})...")
 
             val subjectEntities = mutableListOf<SubjectEntity>()
             val topicEntities = mutableListOf<TopicEntity>()
@@ -237,6 +238,20 @@ class GitHubContentSyncService(
                                             }
                                         } catch (e: Exception) {
                                             Log.w(TAG, "Error parsing remote PYQ for $microUniqueId", e)
+                                        }
+                                    }
+
+                                    // Fetch Markdown assets (Concept, Short_Notes, Practice) for offline caching
+                                    listOf("Concept", "Short_Notes", "Practice").forEach { assetType ->
+                                        val mdRemotePath = "$basePath/$assetType/content.md"
+                                        fetchFromRemoteWithFallback(mdRemotePath)?.let { mdStr ->
+                                            try {
+                                                val localMdFile = File(context.filesDir, "$localAssetBasePath/$assetType/content.md")
+                                                localMdFile.parentFile?.mkdirs()
+                                                localMdFile.writeText(mdStr, Charsets.UTF_8)
+                                            } catch (e: Exception) {
+                                                Log.w(TAG, "Error caching $mdRemotePath to local storage", e)
+                                            }
                                         }
                                     }
                                 }

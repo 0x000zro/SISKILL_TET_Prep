@@ -82,7 +82,7 @@ class SettingsFragment : Fragment() {
         val syncService = GitHubContentSyncService(requireContext(), app.database, app.preferences)
 
         viewLifecycleOwner.lifecycleScope.launch {
-            val result = syncService.syncContent { progress, message ->
+            val result = syncService.syncContent(forceSync = true) { progress, message ->
                 requireActivity().runOnUiThread {
                     progressBar.isIndeterminate = false
                     progressBar.progress = progress

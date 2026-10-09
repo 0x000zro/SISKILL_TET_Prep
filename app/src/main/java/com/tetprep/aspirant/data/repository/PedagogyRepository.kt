@@ -121,9 +121,21 @@ class PedagogyRepository(
     suspend fun getMockTestByIdDirect(testId: String): MockTestEntity? =
         database.mockTestDao().getMockTestByIdDirect(testId)
 
-    // Markdown file reader with local asset fallback
+    // Markdown file reader: checks synced local storage first, then falls back to bundled APK assets
     suspend fun readMarkdownContent(assetPath: String?): String = withContext(Dispatchers.IO) {
         if (assetPath == null) return@withContext "*No content specified.*"
+
+        // 1. Check if an updated file was downloaded via Over-The-Air GitHub Sync
+        val syncedFile = java.io.File(context.filesDir, assetPath)
+        if (syncedFile.exists() && syncedFile.length() > 0) {
+            try {
+                return@withContext syncedFile.readText(Charsets.UTF_8)
+            } catch (e: Exception) {
+                // fallback to APK assets
+            }
+        }
+
+        // 2. Fallback to bundled APK assets
         try {
             context.assets.open(assetPath).use { inputStream ->
                 InputStreamReader(inputStream, Charsets.UTF_8).use { reader ->
