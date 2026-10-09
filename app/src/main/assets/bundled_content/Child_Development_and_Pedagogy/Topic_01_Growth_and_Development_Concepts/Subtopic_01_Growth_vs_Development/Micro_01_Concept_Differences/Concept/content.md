@@ -1,23 +1,4 @@
 ---
-id: study_ch01
-chapter: 1
-title: "वृद्धि एवं विकास की संकल्पना"
-title_raw: "वृद्धि एवं विकास की संकल्पना"
-subtitle: "Growth & Development"
-category: "Unit 1: बाल विकास एवं सामाजीकरण"
-category_raw: "Unit 1: बाल विकास एवं सामाजीकरण"
-path: "study/ch01_growth_and_development.md"
-unit: "Unit 1: बाल विकास एवं सामाजीकरण"
-mode: "study"
-source: "cpd.md"
-manifest_version: 2
-generated_on: "2026-10-06"
-total_chapters: 27
-tags:
-  - CPD
-  - Hindi Medium
-  - Teacher Eligibility
----
 
 # अध्याय 1: वृद्धि एवं विकास की संकल्पना
 
@@ -157,13 +138,4 @@ tags:
 | सूक्ष्म गत्यात्मक | Fine Motor | छोटी मांसपेशियों और आँखों का समन्वय (लिखना, काटना)। |
 | वर्तुलाकार विकास | Spiral Development | आगे बढ़ना फिर सुदृढ़ करने हेतु पीछे लौटना। |
 
-## 13. cpd.md स्रोत मैपिंग
-- उपयोग किए गए शीर्षक/अवधारणाएँ:
-  - `[CPD_GAP] Concept of Growth and Development (Priority 3 मानक शैक्षिक मनोविज्ञान पाठ्यक्रम से लिया गया)`
-  - `[CPD_GAP] Principles of Development (निरंतरता, दिशा, वैयक्तिक भिन्नता)`
-  - `[CPD_GAP] Motor Skills (Gross vs Fine Motor Skills)`
 
-## 14. अगला कदम
-- Revision file (`revision/ch01_growth_and_development.md`) से त्वरित पुनरावृत्ति करें।
-- Practice JSON (`practice/ch01_growth_and_development.json`) से 30 प्रश्न हल करें।
-- Test JSON (`test/ch01_growth_and_development.json`) से 30 मिनट का समयबद्ध टेस्ट दें।
